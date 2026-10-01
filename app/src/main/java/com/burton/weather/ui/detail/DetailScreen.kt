@@ -158,6 +158,16 @@ private fun WeatherBody(
         )
     }
     Spacer(Modifier.height(16.dp))
+    SectionTitle("Next 24 hours")
+    Row(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        bundle.hourly.take(24).forEach { hour ->
+            HourChip(hour, units)
+        }
+    }
+    Spacer(Modifier.height(18.dp))
     MetricGrid(
         listOf(
             "Humidity" to "${current.humidity}%",
@@ -190,16 +200,6 @@ private fun WeatherBody(
                 air.grassPollen?.let { "Grass pollen" to "${it.toInt()} grains/m³" },
             ),
         )
-    }
-    Spacer(Modifier.height(18.dp))
-    SectionTitle("Next 24 hours")
-    Row(
-        modifier = Modifier.horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        bundle.hourly.take(24).forEach { hour ->
-            HourChip(hour, units)
-        }
     }
     Spacer(Modifier.height(18.dp))
     SectionTitle("14-day outlook")

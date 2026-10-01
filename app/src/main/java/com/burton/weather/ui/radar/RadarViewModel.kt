@@ -43,7 +43,6 @@ class RadarViewModel @Inject constructor(
 
     init {
         refresh()
-        startTicker()
     }
 
     fun refresh() {
@@ -63,6 +62,11 @@ class RadarViewModel @Inject constructor(
                     _ui.update { it.copy(ready = true, error = err.message ?: "Radar failed") }
                 }
         }
+    }
+
+    fun ensureTicker() {
+        if (ticker?.isActive == true) return
+        startTicker()
     }
 
     fun togglePlay() {

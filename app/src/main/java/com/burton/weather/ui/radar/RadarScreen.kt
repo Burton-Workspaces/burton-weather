@@ -56,6 +56,8 @@ import com.burton.weather.ui.theme.BurtonCharcoal
 import com.burton.weather.ui.theme.BurtonElevated
 import com.burton.weather.ui.theme.BurtonIvory
 import com.burton.weather.ui.theme.BurtonMute
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -69,6 +71,9 @@ fun RadarScreen(
 ) {
     val snapshot by viewModel.snapshot.collectAsStateWithLifecycle()
     val ui by viewModel.ui.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        viewModel.ensureTicker()
+    }
     val focus = if (locked) {
         ui.focusCityId?.let { id -> snapshot.cities.firstOrNull { it.id == id } }
     } else {
@@ -174,7 +179,11 @@ fun RadarThumbnail(
     modifier: Modifier = Modifier,
     viewModel: RadarViewModel = hiltViewModel(),
 ) {
-    val ui by viewModel.ui.collectAsStateWithLifecycle()
+    val latestFrame by remember {
+        viewModel.ui
+            .map { ui -> ui.templates.lastOrNull()?.let { listOf(it) }.orEmpty() }
+            .distinctUntilChanged()
+    }.collectAsStateWithLifecycle(initialValue = emptyList())
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
@@ -183,8 +192,8 @@ fun RadarThumbnail(
             .clickable(onClick = onClick),
     ) {
         RadarMap(
-            templates = ui.templates,
-            frameIndex = ui.frameIndex,
+            templates = latestFrame,
+            frameIndex = 0,
             city = city,
             interactive = false,
             zoom = 8,
