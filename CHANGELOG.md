@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/Burton-Workspaces/burton-weather/compare/v1.2.0...v1.3.0) (2026-10-01)
+
+
+### Features
+
+* surface the 24-hour forecast and keep the city radar tile static ([0471217](https://github.com/Burton-Workspaces/burton-weather/commit/047121776521370400c4ce755f5d70258316fb72))
+
 ## [1.2.0](https://github.com/Burton-Workspaces/burton-weather/compare/v1.1.1...v1.2.0) (2026-10-01)
 
 
