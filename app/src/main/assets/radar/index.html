@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="leaflet.css" />
+  <style>
+    html, body, #map { height: 100%; margin: 0; background: #000; }
+    .leaflet-control-attribution { background: rgba(0,0,0,0.55) !important; color: #9A958C !important; }
+    .leaflet-control-attribution a { color: #D4C4A8 !important; }
+    .leaflet-control-zoom a { background: #161616 !important; color: #F5F2EC !important; border-color: #2E2E2E !important; }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<script src="leaflet.js"></script>
+<script>
+  const map = L.map("map", {
+    zoomControl: true,
+    attributionControl: true,
+  }).setView([39.5, -98.35], 4);
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    attribution: "&copy; OpenStreetMap, &copy; CARTO, radar RainViewer",
+    maxZoom: 18,
+    subdomains: "abcd",
+  }).addTo(map);
+
+  let overlays = [];
+  let current = 0;
+
+  function clearOverlays() {
+    overlays.forEach((layer) => map.removeLayer(layer));
+    overlays = [];
+  }
+
+  window.Radar = {
+    setFrames: function (templates) {
+      clearOverlays();
+      overlays = (templates || []).map((url) =>
+        L.tileLayer(url, { opacity: 0, pane: "overlayPane", maxZoom: 12 })
+      );
+      overlays.forEach((layer) => layer.addTo(map));
+      this.setIndex(current);
+    },
+    setIndex: function (index) {
+      if (!overlays.length) return;
+      current = Math.max(0, Math.min(index, overlays.length - 1));
+      overlays.forEach((layer, i) => layer.setOpacity(i === current ? 0.72 : 0));
+    },
+    center: function (lat, lon, zoom) {
+      map.setView([lat, lon], zoom || 7);
+    },
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+-keepattributes SourceFile,LineNumberTable
+-keep class com.burton.weather.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
