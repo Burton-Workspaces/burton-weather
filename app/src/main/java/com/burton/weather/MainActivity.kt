@@ -120,7 +120,18 @@ private fun BurtonApp(
             ) {
                 DetailScreen(
                     onBack = { navController.popBackStack() },
-                    onRadar = { navController.goTab(Routes.radar(it), restore = false) },
+                    onRadar = {
+                        navController.navigate(Routes.cityRadar(it)) { launchSingleTop = true }
+                    },
+                )
+            }
+            composable(
+                Routes.CITY_RADAR,
+                arguments = listOf(navArgument("cityId") { type = NavType.StringType }),
+            ) {
+                RadarScreen(
+                    locked = true,
+                    onBack = { navController.popBackStack() },
                 )
             }
         }

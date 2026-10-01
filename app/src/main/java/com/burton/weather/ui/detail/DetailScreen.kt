@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,13 +18,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Radar
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.burton.weather.domain.DailyPoint
 import com.burton.weather.domain.HourlyPoint
+import com.burton.weather.domain.SavedCity
 import com.burton.weather.domain.Units
 import com.burton.weather.domain.WeatherBundle
 import com.burton.weather.domain.WeatherCodes
@@ -45,6 +45,7 @@ import com.burton.weather.domain.formatWind
 import com.burton.weather.domain.usAqiLabel
 import com.burton.weather.ui.components.RoomsSkeleton
 import com.burton.weather.ui.components.weatherGlyph
+import com.burton.weather.ui.radar.RadarThumbnail
 import com.burton.weather.ui.theme.BurtonCharcoal
 import com.burton.weather.ui.theme.BurtonDanger
 import com.burton.weather.ui.theme.BurtonIvory
@@ -74,9 +75,6 @@ fun DetailScreen(
                 Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = BurtonIvory)
             }
             Spacer(Modifier.weight(1f))
-            IconButton(onClick = { onRadar(viewModel.cityId) }) {
-                Icon(Icons.Rounded.Radar, contentDescription = "Radar", tint = BurtonIvory)
-            }
             IconButton(onClick = viewModel::refresh) {
                 Icon(Icons.Rounded.Refresh, contentDescription = "Refresh", tint = BurtonIvory)
             }
@@ -103,7 +101,12 @@ fun DetailScreen(
                 when {
                     bundle == null && viewModel.cityId in snapshot.refreshing -> RoomsSkeleton(count = 2)
                     bundle == null -> Text("Waiting for forecast.", color = BurtonMute)
-                    else -> WeatherBody(bundle = bundle, units = snapshot.units, onRadar = { onRadar(city.id) })
+                    else -> WeatherBody(
+                        city = city,
+                        bundle = bundle,
+                        units = snapshot.units,
+                        onRadar = { onRadar(city.id) },
+                    )
                 }
                 Spacer(Modifier.height(28.dp))
             }
@@ -113,37 +116,48 @@ fun DetailScreen(
 
 @Composable
 private fun WeatherBody(
+    city: SavedCity,
     bundle: WeatherBundle,
     units: Units,
     onRadar: () -> Unit,
 ) {
     val current = bundle.current
     val today = bundle.daily.firstOrNull()
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Icon(weatherGlyph(current.weatherCode), contentDescription = null, tint = BurtonSand)
-        Text(
-            formatTemperature(current.temperatureC, units.temperature),
-            style = MaterialTheme.typography.displayLarge,
-            color = BurtonIvory,
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Icon(weatherGlyph(current.weatherCode), contentDescription = null, tint = BurtonSand)
+                Text(
+                    formatTemperature(current.temperatureC, units.temperature),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = BurtonIvory,
+                )
+            }
+            Text(WeatherCodes.label(current.weatherCode), style = MaterialTheme.typography.titleLarge, color = BurtonIvory)
+            Text(
+                "Feels like ${formatTemperatureExact(current.apparentC, units.temperature)}",
+                style = MaterialTheme.typography.bodyLarge,
+                color = BurtonMute,
+            )
+            if (today != null) {
+                Text(
+                    "High ${formatTemperature(today.highC, units.temperature)}  ·  Low ${formatTemperature(today.lowC, units.temperature)}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = BurtonMute,
+                )
+            }
+        }
+        RadarThumbnail(
+            city = city,
+            onClick = onRadar,
+            modifier = Modifier.size(132.dp),
         )
     }
-    Text(WeatherCodes.label(current.weatherCode), style = MaterialTheme.typography.titleLarge, color = BurtonIvory)
-    Text(
-        "Feels like ${formatTemperatureExact(current.apparentC, units.temperature)}",
-        style = MaterialTheme.typography.bodyLarge,
-        color = BurtonMute,
-    )
-    if (today != null) {
-        Text(
-            "High ${formatTemperature(today.highC, units.temperature)}  ·  Low ${formatTemperature(today.lowC, units.temperature)}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = BurtonMute,
-        )
-    }
-    TextButton(onClick = onRadar) {
-        Text("Open radar for this city", color = BurtonSand)
-    }
-    Spacer(Modifier.height(8.dp))
+    Spacer(Modifier.height(16.dp))
     MetricGrid(
         listOf(
             "Humidity" to "${current.humidity}%",

@@ -2,6 +2,7 @@ package com.burton.weather.ui.radar
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.view.MotionEvent
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Refresh
@@ -38,7 +40,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,7 +56,6 @@ import com.burton.weather.ui.theme.BurtonCharcoal
 import com.burton.weather.ui.theme.BurtonElevated
 import com.burton.weather.ui.theme.BurtonIvory
 import com.burton.weather.ui.theme.BurtonMute
-import com.burton.weather.ui.theme.BurtonSand
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -59,11 +63,17 @@ import java.util.Locale
 
 @Composable
 fun RadarScreen(
+    locked: Boolean = false,
+    onBack: (() -> Unit)? = null,
     viewModel: RadarViewModel = hiltViewModel(),
 ) {
     val snapshot by viewModel.snapshot.collectAsStateWithLifecycle()
     val ui by viewModel.ui.collectAsStateWithLifecycle()
-    val focus = snapshot.cities.firstOrNull { it.id == ui.focusCityId } ?: snapshot.cities.firstOrNull()
+    val focus = if (locked) {
+        ui.focusCityId?.let { id -> snapshot.cities.firstOrNull { it.id == id } }
+    } else {
+        snapshot.cities.firstOrNull { it.id == ui.focusCityId } ?: snapshot.cities.firstOrNull()
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -71,12 +81,23 @@ fun RadarScreen(
                 .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                "Radar",
-                style = MaterialTheme.typography.headlineLarge,
-                color = BurtonIvory,
-                modifier = Modifier.weight(1f),
-            )
+            if (onBack != null) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+                        contentDescription = "Back",
+                        tint = BurtonIvory,
+                    )
+                }
+                Spacer(Modifier.weight(1f))
+            } else {
+                Text(
+                    "Radar",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = BurtonIvory,
+                    modifier = Modifier.weight(1f),
+                )
+            }
             IconButton(onClick = viewModel::togglePlay, enabled = ui.catalog != null) {
                 Icon(
                     if (ui.playing) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
@@ -88,13 +109,21 @@ fun RadarScreen(
                 Icon(Icons.Rounded.Refresh, contentDescription = "Refresh radar", tint = BurtonIvory)
             }
         }
+        if (locked) {
+            Text(
+                focus?.name ?: "Radar",
+                style = MaterialTheme.typography.headlineLarge,
+                color = BurtonIvory,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
+        }
         Text(
             text = ui.frame?.let { formatRadarTime(it.timeUnix) } ?: ui.error ?: "Loading RainViewer frames",
             style = MaterialTheme.typography.bodyMedium,
             color = BurtonMute,
             modifier = Modifier.padding(horizontal = 20.dp),
         )
-        if (snapshot.cities.isNotEmpty()) {
+        if (!locked && snapshot.cities.isNotEmpty()) {
             Spacer(Modifier.height(10.dp))
             Row(
                 modifier = Modifier
@@ -126,7 +155,8 @@ fun RadarScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp)
                 .padding(bottom = 12.dp)
-                .background(BurtonBlack, RoundedCornerShape(20.dp)),
+                .clip(RoundedCornerShape(20.dp))
+                .background(BurtonBlack),
         ) {
             RadarMap(
                 templates = ui.templates,
@@ -137,12 +167,41 @@ fun RadarScreen(
     }
 }
 
-@SuppressLint("SetJavaScriptEnabled")
 @Composable
-private fun RadarMap(
+fun RadarThumbnail(
+    city: SavedCity,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: RadarViewModel = hiltViewModel(),
+) {
+    val ui by viewModel.ui.collectAsStateWithLifecycle()
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(BurtonCharcoal)
+            .semantics { contentDescription = "Radar for ${city.name}" }
+            .clickable(onClick = onClick),
+    ) {
+        RadarMap(
+            templates = ui.templates,
+            frameIndex = ui.frameIndex,
+            city = city,
+            interactive = false,
+            zoom = 8,
+            onClick = onClick,
+        )
+    }
+}
+
+@SuppressLint("SetJavaScriptEnabled", "ClickableViewAccessibility")
+@Composable
+internal fun RadarMap(
     templates: List<String>,
     frameIndex: Int,
     city: SavedCity?,
+    interactive: Boolean = true,
+    zoom: Int = 7,
+    onClick: (() -> Unit)? = null,
 ) {
     var webView by remember { mutableStateOf<WebView?>(null) }
     var pageReady by remember { mutableStateOf(false) }
@@ -187,8 +246,20 @@ private fun RadarMap(
         },
         update = { view ->
             view.evaluateJavascript("Radar && Radar.resize && Radar.resize()", null)
+            if (interactive) {
+                view.setOnTouchListener(null)
+            } else {
+                view.setOnTouchListener { touched, event ->
+                    if (event.actionMasked == MotionEvent.ACTION_UP) {
+                        touched.performClick()
+                        onClick?.invoke()
+                    }
+                    true
+                }
+            }
         },
         onRelease = { view ->
+            view.setOnTouchListener(null)
             view.stopLoading()
             view.onPause()
             view.destroy()
@@ -207,11 +278,16 @@ private fun RadarMap(
         if (!pageReady) return@LaunchedEffect
         view.evaluateJavascript("Radar.setIndex($frameIndex)", null)
     }
-    LaunchedEffect(pageReady, city?.id) {
+    LaunchedEffect(pageReady, city?.id, zoom) {
         val view = webView ?: return@LaunchedEffect
         val target = city ?: return@LaunchedEffect
         if (!pageReady) return@LaunchedEffect
-        view.evaluateJavascript("Radar.center(${target.latitude},${target.longitude},7)", null)
+        view.evaluateJavascript("Radar.center(${target.latitude},${target.longitude},$zoom)", null)
+    }
+    LaunchedEffect(pageReady, interactive) {
+        val view = webView ?: return@LaunchedEffect
+        if (!pageReady) return@LaunchedEffect
+        view.evaluateJavascript("Radar.setInteractive(${if (interactive) "true" else "false"})", null)
     }
 }
 

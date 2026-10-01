@@ -22,11 +22,11 @@ If Open-Meteo’s air-quality feed answers, you also get US AQI (and EU AQI when
 
 The next 24 hours scroll sideways. The 14-day outlook lists condition, precip chance, rainfall, UV, and high/low.
 
-**Radar** jumps to the map centered on this city. **Delete** removes the city and returns to the list.
+Current temperature and WMO condition sit beside a live radar thumbnail. Tap the thumbnail for a full-screen radar locked to this city (chevron returns to detail; the bottom bar stays hidden). **Delete** removes the city and returns to the list.
 
 ### Radar
 
-Animated RainViewer frames over a dark Carto/OSM base map. Play/pause steps through past frames and nowcast. City chips recenter the map. Refresh pulls a new RainViewer catalog (new timestamps about every 10 minutes).
+Animated RainViewer frames over a dark Carto/OSM base map. From the Radar tab, play/pause steps through past frames and nowcast, and city chips recenter the map. Refresh pulls a new RainViewer catalog (new timestamps about every 10 minutes). City detail opens the same map for one city only.
 
 ### Settings
 

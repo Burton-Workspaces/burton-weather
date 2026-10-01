@@ -47,4 +47,4 @@ Removing a city drops it from the list and from the in-memory weather map, then 
 
 ## UI shell
 
-`MainActivity` hosts a `NavHost` and a persistent bottom bar. Tab order is Cities → Radar. City detail is a nested destination (bar hidden). Add-city and Settings are **FullScreenModal** overlays from Cities.
+`MainActivity` hosts a `NavHost` and a persistent bottom bar. Tab order is Cities → Radar. City detail is a nested destination (bar hidden). Tapping the detail radar thumbnail opens `city/{id}/radar`, still with the bar hidden and no city chips; the Radar tab keeps multi-city selection. Add-city and Settings are **FullScreenModal** overlays from Cities.
