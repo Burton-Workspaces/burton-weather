@@ -120,18 +120,18 @@ private fun BurtonApp(
             ) {
                 DetailScreen(
                     onBack = { navController.popBackStack() },
-                    onRadar = { navController.navigate(Routes.radar(it)) },
+                    onRadar = { navController.goTab(Routes.radar(it), restore = false) },
                 )
             }
         }
     }
 }
 
-private fun NavHostController.goTab(route: String) {
+private fun NavHostController.goTab(route: String, restore: Boolean = true) {
     navigate(route) {
         popUpTo(graph.findStartDestination().id) { saveState = true }
         launchSingleTop = true
-        restoreState = true
+        restoreState = restore
     }
 }
 

@@ -1,6 +1,9 @@
 package com.burton.weather.ui.radar
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.view.ViewGroup
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.background
@@ -33,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -140,21 +144,48 @@ private fun RadarMap(
     var webView by remember { mutableStateOf<WebView?>(null) }
     var pageReady by remember { mutableStateOf(false) }
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .clipToBounds(),
         factory = { context ->
             WebView(context).apply {
-                setBackgroundColor(0xFF000000.toInt())
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                )
+                setBackgroundColor(Color.TRANSPARENT)
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
                 settings.allowFileAccess = true
+                settings.allowContentAccess = true
+                settings.loadsImagesAutomatically = true
+                settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                @Suppress("DEPRECATION")
+                settings.allowFileAccessFromFileURLs = true
+                @Suppress("DEPRECATION")
+                settings.allowUniversalAccessFromFileURLs = true
+                isNestedScrollingEnabled = false
                 webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
                         pageReady = true
+                        view?.evaluateJavascript("Radar && Radar.resize && Radar.resize()", null)
                     }
                 }
                 loadUrl("file:///android_asset/radar/index.html")
+                onResume()
+                resumeTimers()
                 webView = this
             }
+        },
+        update = { view ->
+            view.evaluateJavascript("Radar && Radar.resize && Radar.resize()", null)
+        },
+        onRelease = { view ->
+            view.stopLoading()
+            view.onPause()
+            view.destroy()
+            webView = null
+            pageReady = false
         },
     )
     LaunchedEffect(pageReady, templates) {

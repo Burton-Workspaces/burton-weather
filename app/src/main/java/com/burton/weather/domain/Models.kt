@@ -122,7 +122,7 @@ data class RadarCatalog(
 )
 
 data class Units(
-    val temperature: TempUnit = TempUnit.C,
+    val temperature: TempUnit = TempUnit.F,
     val wind: WindUnit = WindUnit.Kmh,
 )
 

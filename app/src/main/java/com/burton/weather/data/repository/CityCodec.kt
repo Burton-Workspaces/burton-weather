@@ -56,7 +56,7 @@ object CityCodec {
         }
         val unitsObj = root.obj("units")
         val units = Units(
-            temperature = if (unitsObj.bool("fahrenheit")) TempUnit.F else TempUnit.C,
+            temperature = if (unitsObj.bool("fahrenheit", fallback = true)) TempUnit.F else TempUnit.C,
             wind = if (unitsObj.bool("mph")) WindUnit.Mph else WindUnit.Kmh,
         )
         return StoredState(cities = cities, units = units)

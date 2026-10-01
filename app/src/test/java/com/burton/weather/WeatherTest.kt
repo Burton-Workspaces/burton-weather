@@ -183,6 +183,22 @@ class CityCodecTest {
 
     @Test
     fun emptyJson() {
-        assertTrue(CityCodec.decode("").cities.isEmpty())
+        val decoded = CityCodec.decode("")
+        assertTrue(decoded.cities.isEmpty())
+        assertEquals(TempUnit.F, decoded.units.temperature)
+    }
+
+    @Test
+    fun missingUnitsDefaultToFahrenheit() {
+        val decoded = CityCodec.decode("""{"cities":[]}""")
+        assertEquals(TempUnit.F, decoded.units.temperature)
+        assertEquals(WindUnit.Kmh, decoded.units.wind)
+    }
+
+    @Test
+    fun explicitCelsiusIsPreserved() {
+        val decoded = CityCodec.decode("""{"cities":[],"units":{"fahrenheit":false,"mph":false}}""")
+        assertEquals(TempUnit.C, decoded.units.temperature)
+        assertEquals(WindUnit.Kmh, decoded.units.wind)
     }
 }
