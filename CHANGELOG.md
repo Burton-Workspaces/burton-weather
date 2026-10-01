@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Burton-Workspaces/burton-weather/compare/v1.1.0...v1.1.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* default to Fahrenheit and restore radar map and tab navigation ([ad5e86a](https://github.com/Burton-Workspaces/burton-weather/commit/ad5e86a0aac8186a1cc558433f8e9d20bb8c22f6))
+
 ## [1.1.0](https://github.com/Burton-Workspaces/burton-weather/compare/v1.0.0...v1.1.0) (2026-10-01)
 
 
