@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/Burton-Workspaces/burton-weather/compare/v1.1.1...v1.2.0) (2026-10-01)
+
+
+### Features
+
+* load CARTO radar tiles with an app-restricted API key ([97db672](https://github.com/Burton-Workspaces/burton-weather/commit/97db67237655c2168ee45c8aa51d26102640953c))
+* open a city-locked radar from the detail thumbnail ([746fb18](https://github.com/Burton-Workspaces/burton-weather/commit/746fb187d6532f1e5dafbbed211a8269f01f5074))
+
 ## [1.1.1](https://github.com/Burton-Workspaces/burton-weather/compare/v1.1.0...v1.1.1) (2026-10-01)
 
 
