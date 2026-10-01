@@ -2,6 +2,7 @@ package com.burton.weather
 
 import com.burton.weather.data.geocode.Geocoder
 import com.burton.weather.data.parse.TinyJson
+import com.burton.weather.data.radar.CartoBasemap
 import com.burton.weather.data.radar.RainViewer
 import com.burton.weather.data.repository.CityCodec
 import com.burton.weather.data.repository.StoredState
@@ -139,6 +140,15 @@ class OpenMeteoTest {
         assertEquals(1, bundle.hourly.size)
         assertEquals(15.0, bundle.daily[0].highC, 0.01)
         assertEquals(41, bundle.air?.usAqi)
+    }
+}
+
+class CartoBasemapTest {
+    @Test
+    fun matchesCartoHosts() {
+        assertTrue(CartoBasemap.isCartoHost("a.basemaps.cartocdn.com"))
+        assertTrue(CartoBasemap.isCartoHost("basemaps.cartocdn.com"))
+        assertTrue(!CartoBasemap.isCartoHost("tilecache.rainviewer.com"))
     }
 }
 

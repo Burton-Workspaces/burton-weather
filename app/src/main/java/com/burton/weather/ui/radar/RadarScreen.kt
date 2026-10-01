@@ -3,6 +3,8 @@ package com.burton.weather.ui.radar
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -42,6 +44,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.burton.weather.data.parse.TinyJson
+import com.burton.weather.data.radar.CartoBasemap
 import com.burton.weather.domain.SavedCity
 import com.burton.weather.ui.theme.BurtonBlack
 import com.burton.weather.ui.theme.BurtonCharcoal
@@ -166,6 +169,11 @@ private fun RadarMap(
                 settings.allowUniversalAccessFromFileURLs = true
                 isNestedScrollingEnabled = false
                 webViewClient = object : WebViewClient() {
+                    override fun shouldInterceptRequest(
+                        view: WebView,
+                        request: WebResourceRequest,
+                    ): WebResourceResponse? = CartoBasemap.intercept(view.context, request)
+
                     override fun onPageFinished(view: WebView?, url: String?) {
                         pageReady = true
                         view?.evaluateJavascript("Radar && Radar.resize && Radar.resize()", null)

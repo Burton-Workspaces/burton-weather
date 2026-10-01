@@ -34,6 +34,8 @@ Values stay metric in the model. Compose formats °C/°F and km/h/mph from `Unit
 
 `RadarScreen` hosts a WebView on `file:///android_asset/radar/index.html` (vendored Leaflet). Compose owns play/pause and frame index; JavaScript swaps overlay opacity.
 
+The base map is CARTO Dark Matter raster tiles (`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=`). `CartoBasemap` adds the Android package and signing SHA-1 headers those keys expect. How to request and restrict a key is in [development.md](development.md).
+
 ## Snapshot and cache
 
 `WeatherRepository` is a process singleton. `start()`:

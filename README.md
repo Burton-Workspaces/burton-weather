@@ -26,7 +26,7 @@ First launch hydrates saved cities from local cache, then refreshes forecasts.
 | --- | --- |
 | [Using the app](docs/using.md) | Screens, permissions, and what lives on-device |
 | [Architecture](docs/architecture.md) | Packages, Open-Meteo, RainViewer, caching |
-| [Development](docs/development.md) | Build, run, test, project layout |
+| [Development](docs/development.md) | Build, run, test, layout, CARTO Basemaps API key |
 | [Build automation](docs/build-automation.md) | GitHub Actions, workflow permissions, signing secrets |
 | [Releases](docs/releases.md) | SemVer, local build + publish walkthrough, GitHub Releases |
 | [F-Droid / Droidify](docs/fdroid.md) | Self-hosted repo, Fingerprint, Pages publish script |
