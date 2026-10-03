@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/Burton-Workspaces/burton-weather/compare/v1.3.0...v1.4.0) (2026-10-03)
+
+
+### Features
+
+* file issues by shaking or long-pressing About ([715c124](https://github.com/Burton-Workspaces/burton-weather/commit/715c124f996a37e884e4a3f49593e4dbdc8fc088))
+
 ## [1.3.0](https://github.com/Burton-Workspaces/burton-weather/compare/v1.2.0...v1.3.0) (2026-10-01)
 
 
