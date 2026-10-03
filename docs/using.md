@@ -37,7 +37,11 @@ Opened from the Cities gear.
 | Cities | How many places are saved |
 | Temperature | Tap to switch °C and °F |
 | Wind | Tap to switch km/h and mph |
-| Burton Weather | App version from `version.txt` |
+| Burton Weather | App version from `version.txt`. Long-press files an issue. |
+
+### File an issue
+
+Shake the phone, or long-press **About** in Settings. Burton Issues opens on New issue with this app already selected. Nothing is posted until you submit; Back cancels.
 
 ## Permissions
 

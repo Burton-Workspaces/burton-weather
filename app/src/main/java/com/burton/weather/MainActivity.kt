@@ -28,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.burton.weather.report.ShakeToReport
 import com.burton.weather.ui.cities.CitiesScreen
 import com.burton.weather.ui.detail.DetailScreen
 import com.burton.weather.ui.navigation.Routes
@@ -48,6 +49,7 @@ class MainActivity : ComponentActivity() {
         if (granted) pendingLocation?.invoke()
         pendingLocation = null
     }
+    private val shakeToReport by lazy { ShakeToReport(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +59,16 @@ class MainActivity : ComponentActivity() {
                 BurtonApp(onNeedLocation = ::requestLocation)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        shakeToReport.start()
+    }
+
+    override fun onPause() {
+        shakeToReport.stop()
+        super.onPause()
     }
 
     private fun requestLocation(onGranted: () -> Unit) {
