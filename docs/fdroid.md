@@ -6,7 +6,7 @@ This is a **self-hosted simple binary repo** of the same APKs CI already signs. 
 
 Official HOWTO: [Setup an F-Droid App Repo](https://f-droid.org/docs/Setup_an_F-Droid_App_Repo/).
 
-Burton Android apps share one Pages catalog: [Burton-Workspaces/burton-sonos-fdroid](https://github.com/Burton-Workspaces/burton-sonos-fdroid). Publish this APK into that same `repo/` so Droidify users already subscribed keep seeing updates.
+Burton Android apps share one Pages catalog: [Burton-Workspaces/burton-app-dist](https://github.com/Burton-Workspaces/burton-app-dist). Publish this APK into that same `repo/` so Droidify users already subscribed keep seeing updates.
 
 ## Two keys
 
@@ -42,15 +42,15 @@ Do **not** use Debian’s `apt install fdroidserver` (2.2.1). That stack’s And
 
 Set `repo_url` to:
 
-`https://burton-workspaces.github.io/burton-sonos-fdroid/fdroid/repo`
+`https://burton-workspaces.github.io/burton-app-dist/fdroid/repo`
 
-Clone [burton-sonos-fdroid](https://github.com/Burton-Workspaces/burton-sonos-fdroid) **next to** this app repo (`../burton-sonos-fdroid`). Pages is served from `main` at `/`. The `/fdroid/repo` path is filled by the publish script.
+Clone [burton-app-dist](https://github.com/Burton-Workspaces/burton-app-dist) **next to** this app repo (`../rabun-app-dist`). Pages is served from `main` at `/`. The `/fdroid/repo` path is filled by the publish script.
 
 ## Publish with the Pages script
 
-`scripts/publish-fdroid-pages.sh` copies a signed APK into your private `fdroid` working tree, runs `fdroid update`, then mirrors **only** `repo/` into [burton-sonos-fdroid](https://github.com/Burton-Workspaces/burton-sonos-fdroid) and pushes.
+`scripts/publish-fdroid-pages.sh` copies a signed APK into your private `fdroid` working tree, runs `fdroid update`, then mirrors **only** `repo/` into [burton-app-dist](https://github.com/Burton-Workspaces/burton-app-dist) and pushes.
 
-It will not use this Android repo as the Pages target, and it will not copy `config.yml` or the repo keystore. `FDROID_PAGES_DIR` defaults to `../burton-sonos-fdroid` when that clone exists.
+It will not use this Android repo as the Pages target, and it will not copy `config.yml` or the repo keystore. `FDROID_PAGES_DIR` defaults to `../rabun-app-dist` when that clone exists.
 
 ```bash
 export FDROID_ROOT=~/fdroid
@@ -62,7 +62,7 @@ cp fdroid-pages.env.example fdroid-pages.env   # optional; source it if you want
 | --- | --- |
 | `<version>` | Must match `version.txt` (`1.0.0` or `v1.0.0`) |
 | `FDROID_ROOT` | Directory from `fdroid init` (private; holds `config.yml` and the repo keystore) |
-| `FDROID_PAGES_DIR` | Git checkout of `burton-sonos-fdroid` (defaults to `../burton-sonos-fdroid`) |
+| `FDROID_PAGES_DIR` | Git checkout of `burton-app-dist` (defaults to `../rabun-app-dist`) |
 | `FDROID_ASSEMBLE=1` | Always run `assembleRelease` (default: assemble only if `burton-weather-<version>.apk` is missing) |
 | `FDROID_PAGES_PUSH=0` | Commit in the Pages checkout but do not `git push` |
 
@@ -103,9 +103,9 @@ This value is stable until you rotate the **repo** key. Publish it next to the r
 
 The Pages script already publishes **only** `repo/` (APKs, icons, `index-v1.jar`, `index.xml`). Do not upload `config.yml` or `keystore.jks`.
 
-GitHub Pages for this org, after the script has run against a repo named `burton-sonos-fdroid`:
+GitHub Pages for this org, after the script has run against a repo named `burton-app-dist`:
 
-`https://burton-workspaces.github.io/burton-sonos-fdroid/fdroid/repo`
+`https://burton-workspaces.github.io/burton-app-dist/fdroid/repo`
 
 ## Add the repo in Droidify or F-Droid
 

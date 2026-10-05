@@ -2,7 +2,7 @@
 
 An Android weather client. Save cities, read a detailed forecast, remove places you no longer need, and watch a live RainViewer radar. There is no cloud account and no weather-vendor login.
 
-Signed APKs are published on [GitHub Releases](https://github.com/Burton-Workspaces/burton-weather/releases). Droidify / F-Droid: [burton-sonos-fdroid](https://github.com/Burton-Workspaces/burton-sonos-fdroid) (`https://burton-workspaces.github.io/burton-sonos-fdroid/fdroid/repo`).
+Signed APKs are published on [GitHub Releases](https://github.com/Burton-Workspaces/burton-weather/releases). Droidify / F-Droid: [burton-app-dist](https://github.com/Burton-Workspaces/burton-app-dist) (`https://burton-workspaces.github.io/burton-app-dist/fdroid/repo`).
 
 ## What it does
 

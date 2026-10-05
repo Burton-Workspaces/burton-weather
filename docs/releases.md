@@ -75,7 +75,7 @@ Skip any step you have already done. To do the F-Droid working tree, Pages check
 ./scripts/setup-fdroid-and-secrets.sh
 ```
 
-That script is idempotent. It reuses `~/fdroid` and `../burton-sonos-fdroid` when they already exist, copies a sibling Burton JKS if this repo has no keystore yet, creates `Burton-Workspaces/burton-weather` if needed, and writes `KEYSTORE_BASE64` / `KEYSTORE_PASSWORD`. Manual steps below are the same work, split out.
+That script is idempotent. It reuses `~/fdroid` and `../rabun-app-dist` when they already exist, copies a sibling Burton JKS if this repo has no keystore yet, creates `Burton-Workspaces/burton-weather` if needed, and writes `KEYSTORE_BASE64` / `KEYSTORE_PASSWORD`. Manual steps below are the same work, split out.
 
 **1. App signing** (same JKS CI uses; see [build-automation.md](build-automation.md))
 
@@ -104,9 +104,9 @@ chmod 0600 config.yml
 
 Debian `fdroidserver` 2.2.1 cannot scan this app (`androguard` / `res1 must be zero!`). Details: [fdroid.md](fdroid.md).
 
-In `~/fdroid/config.yml` set `repo_url` to `https://burton-workspaces.github.io/burton-sonos-fdroid/fdroid/repo`. Details: [fdroid.md](fdroid.md).
+In `~/fdroid/config.yml` set `repo_url` to `https://burton-workspaces.github.io/burton-app-dist/fdroid/repo`. Details: [fdroid.md](fdroid.md).
 
-**4. Pages checkout** — clone [Burton-Workspaces/burton-sonos-fdroid](https://github.com/Burton-Workspaces/burton-sonos-fdroid) **next to** this app (`../burton-sonos-fdroid`). `./scripts/publish-fdroid-pages.sh` uses that path by default. The same catalog already hosts the other Burton Android apps.
+**4. Pages checkout** — clone [Burton-Workspaces/burton-app-dist](https://github.com/Burton-Workspaces/burton-app-dist) **next to** this app (`../rabun-app-dist`). `./scripts/publish-fdroid-pages.sh` uses that path by default. The same catalog already hosts the other Burton Android apps.
 
 ### Each release
 
@@ -128,19 +128,19 @@ export FDROID_ROOT=~/fdroid
 ./scripts/publish-fdroid-pages.sh 1.0.0
 ```
 
-That reuses `burton-weather-1.0.0.apk` if it is still in the app root, runs `fdroid update --create-metadata` (required in the shared catalog; plain `update` ignores a package with no YAML), copies only `repo/` into `../burton-sonos-fdroid/fdroid/repo/`, writes `FINGERPRINT`, and pushes.
+That reuses `burton-weather-1.0.0.apk` if it is still in the app root, runs `fdroid update --create-metadata` (required in the shared catalog; plain `update` ignores a package with no YAML), copies only `repo/` into `../rabun-app-dist/fdroid/repo/`, writes `FINGERPRINT`, and pushes.
 
 **8. First F-Droid publish only:** confirm `~/fdroid/metadata/com.burton.weather.yml` has name, license, and summary, then run step 7 again if that file was only a stub.
 
 **9. Confirm**
 
 - GitHub Release: `https://github.com/Burton-Workspaces/burton-weather/releases/tag/v1.0.0`
-- F-Droid index: `https://burton-workspaces.github.io/burton-sonos-fdroid/fdroid/repo`
-- Fingerprint: `../burton-sonos-fdroid/FINGERPRINT` (also printed by the publish script)
+- F-Droid index: `https://burton-workspaces.github.io/burton-app-dist/fdroid/repo`
+- Fingerprint: `../rabun-app-dist/FINGERPRINT` (also printed by the publish script)
 
 Droidify → **Repositories** → **+**
 
-- Address: `https://burton-workspaces.github.io/burton-sonos-fdroid/fdroid/repo`
+- Address: `https://burton-workspaces.github.io/burton-app-dist/fdroid/repo`
 - Fingerprint: the 64-character hex from `FINGERPRINT`
 
 Replace `1.0.0` with whatever is in `version.txt` on later versions.
